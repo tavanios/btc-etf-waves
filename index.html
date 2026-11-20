@@ -117,8 +117,8 @@
       <div class="range" id="range">
         <button type="button" data-range="90">3Μ</button>
         <button type="button" data-range="180">6Μ</button>
-        <button type="button" data-range="365" class="on">1Χ</button>
-        <button type="button" data-range="0">Όλα</button>
+        <button type="button" data-range="365">1Χ</button>
+        <button type="button" data-range="0" class="on">Όλα</button>
       </div>
       </div>
     </div>
@@ -245,7 +245,7 @@
   if (lw && lw.active) set('now', `${lw.wave}ο κύμα κάτω από −$2 δισ. (από ${d3.utcFormat('%d/%m')(new Date(lw.start + 'T00:00:00Z'))})`, lw.wave >= 2 ? 'up' : 'down');
   else set('now', 'τα flows 10 ημερών είναι πάνω από −$2 δισ., κανένα ενεργό κύμα');
 
-  let range = 365, tf = 'D', view = 'clean';
+  let range = 0, tf = 'D', view = 'clean';
   // weekly view: one point per week (Mon-start), last close; markers/signals of any day in the week
   const wkKey = (d) => { const t = new Date(d.t); t.setUTCDate(t.getUTCDate() - (t.getUTCDay() + 6) % 7); return t.toISOString().slice(0, 10); };
   const moKey = (d) => d.date.slice(0, 7);
