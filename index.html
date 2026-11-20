@@ -34,15 +34,16 @@
   .legend .zone2 { background: var(--zone2); height: 10px; border: 1px solid var(--c1); }
   .legend .tri { font-size: 11px; }
   .gold { color: #c99a1a; }
-  .sig { border: 2px solid #e08a1e; background: rgba(224,138,30,.08); }
+  .sig { border: 2px solid var(--bad); background: rgba(194,65,45,.07); }
   .sig.strong { border-color: var(--bad); background: rgba(194,65,45,.10); }
-  .orange { color: #e08a1e; }
+  .orange { color: var(--bad); }
+  .green { color: var(--ok); }
   .purple { color: #8e44ad; }
   details > summary { cursor: pointer; color: var(--muted); font-size: 14px; margin: 4px 0 6px; }
   details.card > summary { color: var(--fg); font-size: 18px; font-weight: 600; margin: 0; }
   details[open] > summary { margin-bottom: 10px; }
   .chartcard.clean .full-only, .chartcard:not(.clean) .clean-only { display: none; }
-  .sigtop { border: 2px solid #8e44ad; background: rgba(142,68,173,.07); }
+  .sigtop { border: 2px solid var(--ok); background: rgba(47,138,76,.07); }
   .legend .dash { background: transparent; border-top: 2px dashed var(--bad); height: 0; }
   .chart { position: relative; min-height: 400px; }
   .chart svg text { font-size: 12px; fill: var(--muted); }
@@ -71,7 +72,7 @@
   <div class="card sigtop" id="topcard">
     <h2>Σύνθετο σήμα κορυφής: <span id="toptxt">—</span></h2>
     <p>Τρία κριτήρια: <b id="q1">—</b> ETF εισροές 10 ημερών πάνω από +$4 δισ. (τις τελευταίες 20 συνεδριάσεις) · <b id="q2">—</b> TOTAL2 σε ζώνη κορυφής ($1.030–1.065 / $1.160–1.200 / $1.500–1.560 δισ., τελευταίες 3 μέρες) · <b id="q3">—</b> ▼ σήμα κορυφής από όγκο (μεγάλος όγκος + νέο υψηλό 30 ημερών + φυτίλι πάνω 3%+).</p>
-    <p><b class="purple">◇ Ένδειξη κορυφής</b> = 2 από τα 3. <b class="purple">🔻 Ισχυρή ένδειξη κορυφής</b> = και τα 3.</p>
+    <p><b class="green">◆ Ένδειξη κορυφής</b> = 2 από τα 3. <b class="green">🔻 Ισχυρή ένδειξη κορυφής</b> = και τα 3.</p>
     <details><summary>Ιστορικό και εξηγήσεις ▾</summary>
     <p class="small"><b>Εδώ το ιστορικό είναι αδύναμο.</b> Από το 2024 η «ένδειξη» (2/3) βγήκε 6 φορές: σωστή στις 12/3/2024 και 20/1/2025 (κορυφή εκείνες τις μέρες), περίπου σωστή στις 21/7/2025 (η κορυφή ήρθε 14/8, +6% ψηλότερα) και στις 14/10/2025 (μετά την κορυφή της 6/10, −20% σε 60 μέρες), λάθος στις 11/11/2024 και 1/5/2025 (η τιμή ανέβηκε άλλο +14–16%). Η «ισχυρή» (3/3) βγήκε 2 φορές, 13/11 και 5/12/2024, και <b>ήταν νωρίς και τις δύο</b>: η τιμή ανέβηκε άλλο 12–15% ως την κορυφή της 17/12/2024. Σε ανοδική αγορά οι μεγάλες εισροές συχνά τροφοδοτούν τη συνέχεια, γι' αυτό οι κορυφές πιάνονται δυσκολότερα από τους πάτους. Οι ζώνες βγήκαν από τις ίδιες τις κορυφές (in-sample). Ένδειξη για παρακολούθηση, όχι επενδυτική συμβουλή.</p>
     </details>
@@ -135,7 +136,7 @@
       <span><b class="orange">◆</b> Ένδειξη πάτου (2/3)</span>
       <span><b class="down">🔥</b> Ισχυρή ένδειξη (3/3)</span>
       <span class="full-only"><b class="purple">▼</b> Σήμα κορυφής όγκου</span>
-      <span><b class="purple">◇</b> Ένδειξη κορυφής (2/3) · <b class="purple">🔻</b> 3/3</span>
+      <span><b class="green">◆</b> Ένδειξη κορυφής (2/3) · <b class="green">🔻</b> 3/3</span>
       <span class="full-only"><i style="background:rgba(142,68,173,.25);height:10px;border:1px solid #8e44ad"></i>TOTAL2 ζώνες κορυφής</span>
       <span class="full-only"><b class="down">①</b> 1ο κύμα</span>
       <span class="full-only"><b class="up">②③</b> 2ο/3ο κύμα (εκεί ήρθαν οι πάτοι)</span>
@@ -223,7 +224,7 @@
   all.forEach((d) => { if (d.tscore >= 2) { if (!lastT || (d.t - lastT.t) / 864e5 > 15 || d.tscore > lastT.tscore) tsigs.push(d); lastT = d; } });
   { const L = all[all.length - 1], mk = (ok) => ok ? '✅' : '⬜';
     set('q1', mk(L.tA)); set('q2', mk(L.tB)); set('q3', mk(L.tC));
-    set('toptxt', L.tscore === 3 ? '🔻 Ισχυρή ένδειξη κορυφής (3/3)' : L.tscore === 2 ? '◇ Ένδειξη κορυφής (2/3)' : `κανένα σήμα (${L.tscore}/3)`, L.tscore >= 2 ? 'purple' : ''); }
+    set('toptxt', L.tscore === 3 ? '🔻 Ισχυρή ένδειξη κορυφής (3/3)' : L.tscore === 2 ? '◆ Ένδειξη κορυφής (2/3)' : `κανένα σήμα (${L.tscore}/3)`, L.tscore >= 2 ? 'green' : ''); }
 
   const last = all[all.length - 1], n = all.length;
   const f5 = all.slice(n - 5).reduce((s, d) => s + d.flow, 0), p5 = (last.close / all[n - 6].close - 1) * 100;
@@ -347,9 +348,9 @@
       .style('fill', '#c99a1a').style('font-size', '18px');
     const sg = svg.append('g').selectAll('g').data(tf !== 'D' ? rows.filter((r) => r.sig).map((r) => Object.assign({}, r, { score: r.sig.score })) : sigs.filter((d) => inRange.has(d.date))).join('g')
       .attr('transform', (d) => full ? `translate(${x(d.t)},${mt + 10})` : `translate(${x(d.t)},${Math.min(H - mb - 8, yP(d.close) + 22)})`);
-    if (full) sg.append('line').attr('y1', 10).attr('y2', (d) => yP(d.close) - mt - 30).attr('stroke-dasharray', '2 3').style('stroke', (d) => d.score === 3 ? 'var(--bad)' : '#e08a1e');
+    if (full) sg.append('line').attr('y1', 10).attr('y2', (d) => yP(d.close) - mt - 30).attr('stroke-dasharray', '2 3').style('stroke', (d) => d.score === 3 ? 'var(--bad)' : 'var(--bad)');
     sg.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em').text((d) => d.score === 3 ? '🔥' : '◆')
-      .style('fill', (d) => d.score === 3 ? 'var(--bad)' : '#e08a1e').style('font-size', (d) => d.score === 3 ? '20px' : '18px');
+      .style('fill', (d) => d.score === 3 ? 'var(--bad)' : 'var(--bad)').style('font-size', (d) => d.score === 3 ? '20px' : '18px');
     if (yC.domain()[1] >= 4) {
       F.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', yC(4)).attr('y2', yC(4)).attr('stroke-dasharray', '6 4').attr('stroke-width', 1.2).style('stroke', '#8e44ad');
       F.append('text').attr('x', ml + 4).attr('y', yC(4) - 4).text('+$4 δισ.').style('fill', '#8e44ad');
@@ -360,8 +361,8 @@
       .style('fill', '#8e44ad').style('font-size', '16px');
     const tdat = tf !== 'D' ? rows.filter((r) => r.tsig).map((r) => Object.assign({}, r, { tscore: r.tsig.tscore })) : tsigs.filter((d) => inRange.has(d.date));
     const tg = svg.append('g').selectAll('g').data(tdat).join('g').attr('transform', (d) => full ? `translate(${x(d.t)},${H - mb - 12})` : `translate(${x(d.t)},${Math.max(mt + 8, yP(d.close) - 22)})`);
-    if (full) tg.append('line').attr('y1', -10).attr('y2', (d) => Math.min(-10, yP(d.close) - (H - mb - 12) + 12)).attr('stroke-dasharray', '2 3').style('stroke', '#8e44ad');
-    tg.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em').text((d) => d.tscore === 3 ? '🔻' : '◇').style('fill', '#8e44ad').style('font-size', '18px');
+    if (full) tg.append('line').attr('y1', -10).attr('y2', (d) => Math.min(-10, yP(d.close) - (H - mb - 12) + 12)).attr('stroke-dasharray', '2 3').style('stroke', 'var(--ok)');
+    tg.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em').text((d) => d.tscore === 3 ? '🔻' : '◆').style('fill', 'var(--ok)').style('font-size', '18px');
     const rule = svg.append('line').attr('y1', mt).attr('y2', H - mb).style('stroke', 'var(--muted)').style('display', 'none');
     const dP = svg.append('circle').attr('r', 4).style('fill', 'var(--c0)').style('display', 'none');
     const dC = svg.append('circle').attr('r', 4).style('fill', 'var(--c1)').style('display', 'none');
@@ -389,7 +390,7 @@
       if (vv && vv.bottom) line('★', 'Σήμα πάτου (φυτίλι ' + vv.wick.toFixed(1) + '%)', 'gold');
       const vq = vtOf(d);
       if (vq) line('▼', 'Σήμα κορυφής όγκου (φυτίλι πάνω ' + vq.upWick.toFixed(1) + '%)', 'purple');
-      if (d.tscore >= 2) line(d.tscore === 3 ? '🔻' : '◇', (d.tscore === 3 ? 'Ισχυρή ένδειξη κορυφής' : 'Ένδειξη κορυφής') + ` (${d.tscore}/3: ` + [d.tA && 'ETF εισροές', d.tB && 'TOTAL2 ζώνη κορυφής', d.tC && '▼ όγκος'].filter(Boolean).join(' + ') + ')', 'purple');
+      if (d.tscore >= 2) line(d.tscore === 3 ? '🔻' : '◆', (d.tscore === 3 ? 'Ισχυρή ένδειξη κορυφής' : 'Ένδειξη κορυφής') + ` (${d.tscore}/3: ` + [d.tA && 'ETF εισροές', d.tB && 'TOTAL2 ζώνη κορυφής', d.tC && '▼ όγκος'].filter(Boolean).join(' + ') + ')', 'green');
       if (d.score >= 2) line(d.score === 3 ? '🔥' : '◆', (d.score === 3 ? 'ΙΣΧΥΡΗ ένδειξη' : 'Ένδειξη πάτου') + ` (${d.score}/3: ` + [d.kA && 'ETF κύμα', d.kB && 'TOTAL2 ζώνη', d.kC && '★ όγκος'].filter(Boolean).join(' + ') + ')', d.score === 3 ? 'down' : 'orange');
       const w = waves.filter((w) => (tf !== 'D' ? w.start <= d.date && w.end >= d.from : d.date >= w.start && d.date <= w.end)).pop();
       if (w) line('Κύμα:', w.wave + 'ο κάτω από −$2 δισ.', w.wave >= 2 ? 'up' : 'down');
