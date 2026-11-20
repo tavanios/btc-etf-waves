@@ -122,8 +122,8 @@
       </div>
     </div>
     <div class="legend">
-      <span class="clean-only"><i style="background:rgba(47,138,76,.25);height:10px"></i>Μέρες με σήμα πάτου</span>
-      <span class="clean-only"><i style="background:rgba(142,68,173,.25);height:10px"></i>Μέρες με σήμα κορυφής</span>
+      <span class="clean-only"><i style="background:rgba(194,65,45,.3);height:10px"></i>Μέρες με σήμα πάτου</span>
+      <span class="clean-only"><i style="background:rgba(47,138,76,.3);height:10px"></i>Μέρες με σήμα κορυφής</span>
       <span><i style="background:var(--c0)"></i>Τιμή BTC (δεξιός άξονας)</span>
       <span class="full-only"><i style="background:var(--c1)"></i>ETF flows 10 ημερών (αριστερός άξονας, $ δισ.)</span>
       <span class="full-only"><i style="background:var(--c2)"></i>TOTAL2 (δική του κλίμακα, τιμή στο τέλος της γραμμής)</span>
@@ -293,9 +293,9 @@
         .call(d3.axisLeft(yP).ticks(6).tickSize(W - ml - mr).tickFormat('')).call((g) => g.select('.domain').remove());
       const step = rows.length > 1 ? (x(rows[rows.length - 1].t) - x(rows[0].t)) / (rows.length - 1) : 4;
       svg.append('g').selectAll('rect').data(rows.filter((d) => d.score >= 2)).join('rect')
-        .attr('x', (d) => x(d.t) - step / 2).attr('width', step + 0.5).attr('y', mt).attr('height', H - mt - mb).style('fill', 'rgba(47,138,76,.16)');
+        .attr('x', (d) => x(d.t) - step / 2).attr('width', step + 0.5).attr('y', mt).attr('height', H - mt - mb).style('fill', 'rgba(194,65,45,.16)');
       svg.append('g').selectAll('rect').data(rows.filter((d) => d.tscore >= 2)).join('rect')
-        .attr('x', (d) => x(d.t) - step / 2).attr('width', step + 0.5).attr('y', mt).attr('height', H - mt - mb).style('fill', 'rgba(142,68,173,.14)');
+        .attr('x', (d) => x(d.t) - step / 2).attr('width', step + 0.5).attr('y', mt).attr('height', H - mt - mb).style('fill', 'rgba(47,138,76,.18)');
     }
     const F = svg.append('g').style('display', full ? null : 'none');
     F.append('g').attr('class', 'grid').attr('transform', `translate(${ml},0)`)
