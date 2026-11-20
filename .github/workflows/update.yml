@@ -19,8 +19,13 @@ jobs:
           curl -fsSL --retry 3 -A "Mozilla/5.0" https://www.tftc.io/bitcoin-etf-flows/data.json -o data.new.json
           python3 -c "import json; j=json.load(open('data.new.json')); assert len(j['days']) > 100; print(j['updatedThrough'])"
           mv data.new.json data.json
+      - name: Download TOTAL2 (TradingView)
+        continue-on-error: true
+        run: |
+          pip install websocket-client
+          python3 total2.py
       - name: Commit if changed
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: Update ETF data
-          file_pattern: data.json
+          commit_message: Update data
+          file_pattern: data.json total2.json
