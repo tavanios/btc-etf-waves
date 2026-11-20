@@ -32,6 +32,8 @@
   .legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
   .legend .zone { background: var(--zone); height: 10px; border: 1px solid var(--ok); }
   .legend .zone2 { background: var(--zone2); height: 10px; border: 1px solid var(--c1); }
+  .legend .tri { font-size: 11px; }
+  .gold { color: #c99a1a; }
   .legend .dash { background: transparent; border-top: 2px dashed var(--bad); height: 0; }
   .chart { position: relative; min-height: 400px; }
   .chart svg text { font-size: 12px; fill: var(--muted); }
@@ -58,6 +60,9 @@
     <p><b>Ζώνη 1: $825–860 δισ.</b> (πράσινη): πάτοι στις 7/4/2025 ($831 δισ.), 6/2/2026 ($853 δισ.), 25/6/2026 ($825 δισ.) και 15/11/2026 ($841 δισ.). Και οι τρεις μεγάλοι πάτοι του BTC από το 2025 ήρθαν εδώ, οι δύο του 2026 μάλιστα <b>μαζί με το 2ο κύμα των ETF</b>.<br>
     <b>Ζώνη 2: $700–775 δισ.</b> (μπλε): πάτοι στις 3/1/2024 ($700 δισ.), 5/8/2024 ($722 δισ.) και 6/9/2024 ($775 δισ.). Εδώ βρήκε στήριγμα όταν η ζώνη 1 έσπασε το καλοκαίρι του 2024.</p>
     <p class="small">Όσο κρατάει η ζώνη 1, έχει δουλέψει ως στήριγμα. Αν σπάσει καθαρά, η επόμενη περιοχή στήριξης στο ιστορικό είναι η ζώνη 2 — το 2024 αυτό σήμαινε για το BTC άλλο ~12% πτώση. Λίγες περιπτώσεις, όχι κανόνας.</p>
+    <h2 style="margin-top:14px">Μεγάλος όγκος και σήμα πάτου (το alert του μποτ)</h2>
+    <p><b>▲ Μεγάλος όγκος</b>: ημερήσιο κερί BTC (Binance) με όγκο τουλάχιστον 2x τον μέσο των 20 προηγούμενων ημερών (πράσινο τρίγωνο αν το κερί έκλεισε πάνω, κόκκινο αν κάτω). Από το 2017 έγινε 158 φορές: μόνο ~1 στις 5 ήταν τοπικός πάτος και 20 μέρες μετά η τιμή ήταν ψηλότερα στο 56% — σχεδόν όσο μια τυχαία μέρα (53%). Λίγο καλύτερα με πράσινο κερί (65%), χειρότερα με κόκκινο (48%). <b>Μόνος του δεν λέει πολλά.</b></p>
+    <p><b class="gold">★ Σήμα πάτου</b>: μεγάλος όγκος <b>+</b> νέο χαμηλό 30 ημερών <b>+</b> φυτίλι κάτω 5%+. Από το 2017 έγινε 29 φορές και οι <b>2 στις 3 ήταν τοπικός πάτος</b> (το χαμηλότερο σημείο ±10 ημερών). Από το 2024: 7 σήματα, τα 6 σε τοπικό πάτο — μάλιστα στις 5/8/2024 και 7/4/2025 μαζί με ζώνη του TOTAL2. Όμως 20 μέρες μετά η τιμή ήταν ψηλότερα μόνο στις μισές φορές: <b>βρίσκει καλά το σημείο, όχι την αλλαγή τάσης.</b></p>
     <p class="now">Τώρα: <b id="now">—</b><br>TOTAL2: <b id="now2">—</b></p>
   </div>
 
@@ -85,6 +90,8 @@
       <span><i class="zone"></i>TOTAL2 ζώνη 1: $825–860 δισ.</span>
       <span><i class="zone2"></i>TOTAL2 ζώνη 2: $700–775 δισ.</span>
       <span><i class="dash"></i>Όριο πανικού ETF −$2 δισ.</span>
+      <span class="tri"><b class="up">▲</b><b class="down">▲</b> Μεγάλος όγκος (2x+)</span>
+      <span><b class="gold">★</b> Σήμα πάτου (όγκος + νέο χαμηλό + φυτίλι)</span>
       <span><b class="down">①</b> 1ο κύμα</span>
       <span><b class="up">②③</b> 2ο/3ο κύμα (εκεί ήρθαν οι πάτοι)</span>
     </div>
@@ -93,7 +100,7 @@
   </div>
 
   <footer>
-    Δεδομένα: TOTAL2 από TradingView (CRYPTOCAP:TOTAL2). ETF flows και τιμή BTC: <a href="https://www.tftc.io/bitcoin-etf-flows" rel="noopener">The Commoner Bitcoin ETF Tracker by TFTC</a> (SoSoValue, Farside Investors, τιμή BTC από mempool.space), άδεια <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Ενημερώνεται αυτόματα κάθε μέρα. Δεν αποτελεί επενδυτική συμβουλή.
+    Δεδομένα: TOTAL2 και όγκος BTC από TradingView (CRYPTOCAP:TOTAL2, BINANCE:BTCUSDT). ETF flows και τιμή BTC: <a href="https://www.tftc.io/bitcoin-etf-flows" rel="noopener">The Commoner Bitcoin ETF Tracker by TFTC</a> (SoSoValue, Farside Investors, τιμή BTC από mempool.space), άδεια <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Ενημερώνεται αυτόματα κάθε μέρα. Δεν αποτελεί επενδυτική συμβουλή.
   </footer>
 </main>
 
@@ -109,6 +116,16 @@
 
   let t2 = new Map();
   try { const k = await fetch('total2.json', {cache: 'no-cache'}).then((r) => r.json()); t2 = new Map(k.rows.map((r) => [r[0], {cl: r[1], lo: r[2]}])); } catch (e) {}
+  const vs = new Map();
+  try {
+    const k = await fetch('btc.json', {cache: 'no-cache'}).then((r) => r.json()); const b = k.rows;
+    for (let i = 30; i < b.length - 1; i++) {   // last row = today's candle, not closed yet
+      const [d, o, h, l, c, v] = b[i];
+      const avg = b.slice(i - 20, i).reduce((s, x) => s + x[5], 0) / 20, prevLow = Math.min(...b.slice(i - 30, i).map((x) => x[3]));
+      const body = Math.min(o, c), wick = (body - l) / body * 100, x = v / avg;
+      if (x >= 2) vs.set(d, {x, up: c >= o, bottom: l < prevLow && wick >= 5, newLow: l < prevLow, wick});
+    }
+  } catch (e) {}
   const ZLO = 825, ZHI = 860, Z2LO = 700, Z2HI = 775;
   const all = j.days.filter((d) => d.btcCloseUsd != null).map((d) => ({
     date: d.date, t: new Date(d.date + 'T00:00:00Z'), flow: d.netFlowUsd / 1e6, close: d.btcCloseUsd, t2: t2.has(d.date) ? t2.get(d.date).cl : null }));
@@ -202,6 +219,14 @@
     mg.append('circle').attr('r', 9).style('fill', (w) => w.wave >= 2 ? 'var(--ok)' : 'var(--bad)').style('stroke', 'var(--panel)').attr('stroke-width', 1.5);
     mg.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em').text((w) => w.wave).style('fill', '#fff').style('font-weight', '700');
 
+    const vrows = rows.filter((d) => vs.has(d.date));
+    svg.append('g').selectAll('path').data(vrows).join('path')
+      .attr('d', d3.symbol(d3.symbolTriangle, 34)())
+      .attr('transform', (d) => `translate(${x(d.t)},${yP(d.close) + 12})`)
+      .style('fill', (d) => vs.get(d.date).up ? 'var(--ok)' : 'var(--bad)').style('opacity', .85);
+    svg.append('g').selectAll('text').data(vrows.filter((d) => vs.get(d.date).bottom)).join('text')
+      .attr('x', (d) => x(d.t)).attr('y', (d) => yP(d.close) + 34).attr('text-anchor', 'middle').text('★')
+      .style('fill', '#c99a1a').style('font-size', '18px');
     const rule = svg.append('line').attr('y1', mt).attr('y2', H - mb).style('stroke', 'var(--muted)').style('display', 'none');
     const dP = svg.append('circle').attr('r', 4).style('fill', 'var(--c0)').style('display', 'none');
     const dC = svg.append('circle').attr('r', 4).style('fill', 'var(--c1)').style('display', 'none');
@@ -224,6 +249,9 @@
       if (d.f10 !== null) line('ETF 10 ημερών:', fmtMoney(d.f10 * 1000), d.f10 < 0 ? 'down' : 'up');
       if (d.p10 !== null) line('Τιμή 10 ημερών:', pct(d.p10));
       if (d.t2 !== null) line('TOTAL2:', '$' + d3.format(',.0f')(d.t2) + ' δισ.' + (d.t2 >= ZLO && d.t2 <= ZHI ? ' (ζώνη 1)' : d.t2 >= Z2LO && d.t2 <= Z2HI ? ' (ζώνη 2)' : ''), (d.t2 >= ZLO && d.t2 <= ZHI) || (d.t2 >= Z2LO && d.t2 <= Z2HI) ? 'up' : null);
+      const vv = vs.get(d.date);
+      if (vv) line('Όγκος:', vv.x.toFixed(1) + 'x τον μέσο 20 ημερών' + (vv.newLow ? ' · νέο χαμηλό 30 ημ.' : ''), vv.up ? 'up' : 'down');
+      if (vv && vv.bottom) line('★', 'Σήμα πάτου (φυτίλι ' + vv.wick.toFixed(1) + '%)', 'gold');
       const w = waves.find((w) => d.date >= w.start && d.date <= w.end);
       if (w) line('Κύμα:', w.wave + 'ο κάτω από −$2 δισ.', w.wave >= 2 ? 'up' : 'down');
       line('Τιμή 7 μέρες μετά:', d.next7 === null ? 'δεν έχει έρθει ακόμα' : pct(d.next7), d.next7 === null ? null : (d.next7 < 0 ? 'down' : 'up'));
