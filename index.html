@@ -34,6 +34,9 @@
   .legend .zone2 { background: var(--zone2); height: 10px; border: 1px solid var(--c1); }
   .legend .tri { font-size: 11px; }
   .gold { color: #c99a1a; }
+  .sig { border: 2px solid #e08a1e; background: rgba(224,138,30,.08); }
+  .sig.strong { border-color: var(--bad); background: rgba(194,65,45,.10); }
+  .orange { color: #e08a1e; }
   .legend .dash { background: transparent; border-top: 2px dashed var(--bad); height: 0; }
   .chart { position: relative; min-height: 400px; }
   .chart svg text { font-size: 12px; fill: var(--muted); }
@@ -49,6 +52,13 @@
 <main>
   <h1>BTC ETF flows και TOTAL2: πού βγαίνει ο πάτος</h1>
   <p class="lead">Τις τελευταίες 5 συνεδριάσεις τα ETF είχαν <b id="f5">—</b> και η τιμή κινήθηκε <b id="p5">—</b>. Τελευταία ενημέρωση: <span id="upd">—</span>.</p>
+
+  <div class="card sig" id="sigcard">
+    <h2>Σύνθετο σήμα πάτου: <span id="sigtxt">—</span></h2>
+    <p>Τρία κριτήρια: <b id="k1">—</b> 2ο ή επόμενο κύμα εκροών ETF (κάτω από −$2 δισ.) · <b id="k2">—</b> TOTAL2 σε ζώνη πάτου (τελευταίες 3 μέρες) · <b id="k3">—</b> ★ σήμα πάτου από όγκο (τελευταίες 3 μέρες).</p>
+    <p><b class="orange">◆ Ένδειξη πάτου</b> = 2 από τα 3. <b class="down">🔥 ΙΣΧΥΡΗ ένδειξη</b> = και τα 3 μαζί.</p>
+    <p class="small">Ιστορικό από το 2024: η «ένδειξη» (2 από 3) εμφανίστηκε 6 φορές — 5/7/2024, 5/8/2024, 7/4/2025, 21/11/2025, 29/6/2026 και 17/11/2026 (τώρα). Και οι 5 που έχουν ολοκληρωθεί ήταν κοντά σε τοπικό πάτο (±3 μέρες), 60 μέρες μετά το BTC ήταν ψηλότερα και τις 5 φορές (μέσος όρος +16%), αλλά πρώτα έπεσε κατά μέσο όρο άλλο ~6%. Η «ισχυρή» (3 από 3) <b>δεν έχει εμφανιστεί ποτέ</b> από το 2024. Προσοχή: οι ζώνες του TOTAL2 βγήκαν από αυτούς τους ίδιους πάτους, οπότε το ιστορικό δείχνει καλύτερο απ' ό,τι θα είναι στην πράξη. Λίγες περιπτώσεις — ένδειξη για παρακολούθηση, όχι επενδυτική συμβουλή.</p>
+  </div>
 
   <div class="card">
     <h2>Τι δείχνει</h2>
@@ -92,6 +102,8 @@
       <span><i class="dash"></i>Όριο πανικού ETF −$2 δισ.</span>
       <span class="tri"><b class="up">▲</b><b class="down">▲</b> Μεγάλος όγκος (2x+)</span>
       <span><b class="gold">★</b> Σήμα πάτου (όγκος + νέο χαμηλό + φυτίλι)</span>
+      <span><b class="orange">◆</b> Ένδειξη πάτου (2/3)</span>
+      <span><b class="down">🔥</b> Ισχυρή ένδειξη (3/3)</span>
       <span><b class="down">①</b> 1ο κύμα</span>
       <span><b class="up">②③</b> 2ο/3ο κύμα (εκεί ήρθαν οι πάτοι)</span>
     </div>
@@ -148,6 +160,23 @@
   });
   if (cur) { cur.active = true; waves.push(cur); }
 
+  // composite: A = ETF wave >= 2 active, B = TOTAL2 low in a zone in last 3 days, C = bottom volume signal in last 3 days
+  const back = (d, days, fn) => { for (let k = 0; k <= days; k++) { if (fn(new Date(d.t.getTime() - k * 864e5).toISOString().slice(0, 10))) return true; } return false; };
+  const inZone = (v) => (v >= ZLO && v <= ZHI) || (v >= Z2LO && v <= Z2HI);
+  all.forEach((d) => {
+    const w = waves.find((w) => d.date >= w.start && d.date <= w.end);
+    d.kA = !!(w && w.wave >= 2);
+    d.kB = back(d, 3, (dt) => t2.has(dt) && inZone(t2.get(dt).lo));
+    d.kC = back(d, 3, (dt) => vs.has(dt) && vs.get(dt).bottom);
+    d.score = (+d.kA) + (+d.kB) + (+d.kC);
+  });
+  const sigs = []; let lastSig = null;
+  all.forEach((d) => { if (d.score >= 2) { if (!lastSig || (d.t - lastSig.t) / 864e5 > 15 || d.score > lastSig.score) sigs.push(d); lastSig = d; } });
+  { const L = all[all.length - 1], mk = (ok) => ok ? '✅' : '⬜';
+    set('k1', mk(L.kA)); set('k2', mk(L.kB)); set('k3', mk(L.kC));
+    set('sigtxt', L.score === 3 ? '🔥 ΙΣΧΥΡΗ ένδειξη (3/3)' : L.score === 2 ? '◆ Ένδειξη πάτου (2/3)' : `κανένα σήμα (${L.score}/3)`, L.score === 3 ? 'down' : L.score === 2 ? 'orange' : '');
+    const card = document.getElementById('sigcard'); if (card) { card.classList.toggle('strong', L.score === 3); card.classList.toggle('sig', L.score >= 2); } }
+
   const last = all[all.length - 1], n = all.length;
   const f5 = all.slice(n - 5).reduce((s, d) => s + d.flow, 0), p5 = (last.close / all[n - 6].close - 1) * 100;
   set('f5', (f5 < 0 ? 'εκροές ' : 'εισροές ') + fmtMoney(f5), f5 < 0 ? 'down' : 'up');
@@ -182,7 +211,7 @@
     const fC = (v) => (v < 0 ? '−$' : '$') + d3.format('.1f')(Math.abs(v)) + 'B';
     const meas = svg.append('g');
     const wOf = (ts) => d3.max(ts.map((t) => { const x = meas.append('text').text(t); const w = x.node().getComputedTextLength(); x.remove(); return w; })) || 30;
-    const ml = wOf(yC.ticks(6).map(fC)) + 10, mr = wOf(yP.ticks(6).map(fP)) + 10, mt = 14, mb = 26;
+    const ml = wOf(yC.ticks(6).map(fC)) + 10, mr = wOf(yP.ticks(6).map(fP)) + 10, mt = 28, mb = 26;
     meas.remove();
     const x = d3.scaleUtc().domain(d3.extent(rows, (d) => d.t)).range([ml, W - mr]);
     yC.range([H - mb, mt]); yP.range([H - mb, mt]);
@@ -227,6 +256,11 @@
     svg.append('g').selectAll('text').data(vrows.filter((d) => vs.get(d.date).bottom)).join('text')
       .attr('x', (d) => x(d.t)).attr('y', (d) => yP(d.close) + 34).attr('text-anchor', 'middle').text('★')
       .style('fill', '#c99a1a').style('font-size', '18px');
+    const sg = svg.append('g').selectAll('g').data(sigs.filter((d) => inRange.has(d.date))).join('g')
+      .attr('transform', (d) => `translate(${x(d.t)},${mt + 10})`);
+    sg.append('line').attr('y1', 10).attr('y2', (d) => yP(d.close) - mt - 30).attr('stroke-dasharray', '2 3').style('stroke', (d) => d.score === 3 ? 'var(--bad)' : '#e08a1e');
+    sg.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em').text((d) => d.score === 3 ? '🔥' : '◆')
+      .style('fill', (d) => d.score === 3 ? 'var(--bad)' : '#e08a1e').style('font-size', (d) => d.score === 3 ? '20px' : '18px');
     const rule = svg.append('line').attr('y1', mt).attr('y2', H - mb).style('stroke', 'var(--muted)').style('display', 'none');
     const dP = svg.append('circle').attr('r', 4).style('fill', 'var(--c0)').style('display', 'none');
     const dC = svg.append('circle').attr('r', 4).style('fill', 'var(--c1)').style('display', 'none');
@@ -252,6 +286,7 @@
       const vv = vs.get(d.date);
       if (vv) line('Όγκος:', vv.x.toFixed(1) + 'x τον μέσο 20 ημερών' + (vv.newLow ? ' · νέο χαμηλό 30 ημ.' : ''), vv.up ? 'up' : 'down');
       if (vv && vv.bottom) line('★', 'Σήμα πάτου (φυτίλι ' + vv.wick.toFixed(1) + '%)', 'gold');
+      if (d.score >= 2) line(d.score === 3 ? '🔥' : '◆', (d.score === 3 ? 'ΙΣΧΥΡΗ ένδειξη' : 'Ένδειξη πάτου') + ` (${d.score}/3: ` + [d.kA && 'ETF κύμα', d.kB && 'TOTAL2 ζώνη', d.kC && '★ όγκος'].filter(Boolean).join(' + ') + ')', d.score === 3 ? 'down' : 'orange');
       const w = waves.find((w) => d.date >= w.start && d.date <= w.end);
       if (w) line('Κύμα:', w.wave + 'ο κάτω από −$2 δισ.', w.wave >= 2 ? 'up' : 'down');
       line('Τιμή 7 μέρες μετά:', d.next7 === null ? 'δεν έχει έρθει ακόμα' : pct(d.next7), d.next7 === null ? null : (d.next7 < 0 ? 'down' : 'up'));
