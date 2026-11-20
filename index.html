@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BTC ETF flows: τα κύματα πανικού και ο πάτος</title>
+<meta name="description" content="Ημερήσια flows των US spot Bitcoin ETF μαζί με την τιμή BTC: πότε οι εκροές 10 ημερών πέφτουν κάτω από −$2 δισ. και γιατί ο πάτος ήρθε στο 2ο ή 3ο κύμα.">
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<style>
+  :root { --bg:#faf9f5; --panel:#ffffff; --fg:#1f1e1d; --muted:#6b6a66; --line:#e6e3da; --grid:#eeece6; --ok:#2f8a4c; --bad:#c2412d; --c0:#d97757; --c1:#3b6fb6; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#1f1e1d; --panel:#2a2927; --fg:#f2f0ea; --muted:#a8a69f; --line:#3d3b37; --grid:#34322f; --ok:#5fbf7c; --bad:#ec6f5a; --c0:#e8926f; --c1:#79a6e6; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font: 400 30px/1.2 Georgia, "Times New Roman", serif; margin: 0 0 6px; }
+  .lead { color: var(--muted); margin: 0 0 20px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 18px; }
+  .card h2 { font-size: 18px; font-weight: 600; margin: 0 0 8px; }
+  .card p { margin: 0 0 10px; }
+  .small { font-size: 13px; color: var(--muted); }
+  .now { font-size: 18px; margin: 0; }
+  .tiles { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+  .tile { flex: 1 1 180px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .tile .lab { font-size: 13px; color: var(--muted); }
+  .tile .val { font: 400 26px/1.2 Georgia, serif; font-variant-numeric: tabular-nums; }
+  .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .head h2 { margin: 0; }
+  .range { display: flex; gap: 4px; }
+  .range button { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+  .range button.on { background: var(--fg); color: var(--bg); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+  .legend i { display: inline-block; width: 16px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+  .legend .dash { background: transparent; border-top: 2px dashed var(--bad); height: 0; }
+  .chart { position: relative; min-height: 400px; }
+  .chart svg text { font-size: 12px; fill: var(--muted); }
+  .chart .grid line { stroke: var(--grid); }
+  .chart .domain { stroke: var(--line); }
+  .tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 4px 16px rgba(0,0,0,.12); border-radius: 8px; padding: 8px 10px; font-size: 13px; line-height: 1.5; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .up { color: var(--ok); } .down { color: var(--bad); }
+  footer { font-size: 13px; color: var(--muted); }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>BTC ETF flows: τα κύματα πανικού και ο πάτος</h1>
+  <p class="lead">Τις τελευταίες 5 συνεδριάσεις τα ETF είχαν <b id="f5">—</b> και η τιμή κινήθηκε <b id="p5">—</b>. Τελευταία ενημέρωση: <span id="upd">—</span>.</p>
+
+  <div class="card">
+    <h2>Τι δείχνει</h2>
+    <p>Η γραμμή των ETF δείχνει πόσα λεφτά μπήκαν ή βγήκαν από τα αμερικανικά spot Bitcoin ETF τις τελευταίες 10 συνεδριάσεις. Όταν πέφτει κάτω από την κόκκινη διακεκομμένη στα <b>−$2 δισ.</b>, οι θεσμικοί πουλάνε σε επίπεδο πανικού. Κάθε τέτοια φορά είναι ένα <b>κύμα</b> και σημαδεύεται πάνω στην τιμή με τον αριθμό του. Το κύμα το ορίζουν μόνο τα ETF flows, όχι η τιμή.</p>
+    <p><b>Το μοτίβο:</b> στο <b>1ο κύμα</b> η τιμή κάθε φορά συνέχισε να πέφτει. Ο πάτος ήρθε όταν οι εκροές ξαναχτύπησαν κάτω από τα −$2 δισ. μέσα σε λίγες εβδομάδες: στο <b>2ο κύμα</b> τον Φεβρουάριο και τον Ιούλιο του 2026, στο <b>3ο κύμα</b> τον Νοέμβριο του 2025. Ποτέ στο 1ο.</p>
+    <p class="small">Είναι λίγες περιπτώσεις από τον Ιανουάριο 2024, οπότε είναι μοτίβο για παρακολούθηση και όχι σίγουρο σήμα ή επενδυτική συμβουλή. Τον Νοέμβριο 2025 το 2ο κύμα δεν ήταν ο πάτος· η τιμή έπεσε κι άλλο ως το 3ο. Νέο κύμα μετράει όταν τα flows ξαναπέσουν κάτω από −$2 δισ. μέσα σε 45 μέρες από το τέλος του προηγούμενου.</p>
+    <p class="now">Τώρα: <b id="now">—</b></p>
+  </div>
+
+  <div class="tiles">
+    <div class="tile"><div class="lab">Τιμή BTC</div><div class="val" id="t-price">—</div></div>
+    <div class="tile"><div class="lab">ETF flows 10 συνεδριάσεων</div><div class="val" id="t-f10">—</div></div>
+    <div class="tile"><div class="lab">ETF τελευταία συνεδρίαση</div><div class="val" id="t-day">—</div></div>
+  </div>
+
+  <div class="card">
+    <div class="head">
+      <h2>Τιμή BTC και ETF flows 10 ημερών</h2>
+      <div class="range" id="range">
+        <button type="button" data-range="90">3Μ</button>
+        <button type="button" data-range="180">6Μ</button>
+        <button type="button" data-range="365" class="on">1Χ</button>
+        <button type="button" data-range="0">Όλα</button>
+      </div>
+    </div>
+    <div class="legend">
+      <span><i style="background:var(--c0)"></i>Τιμή BTC (δεξιός άξονας)</span>
+      <span><i style="background:var(--c1)"></i>ETF flows 10 ημερών (αριστερός άξονας, $ δισ.)</span>
+      <span><i class="dash"></i>Όριο πανικού −$2 δισ.</span>
+      <span><b class="down">①</b> 1ο κύμα</span>
+      <span><b class="up">②③</b> 2ο/3ο κύμα (εκεί ήρθαν οι πάτοι)</span>
+    </div>
+    <div class="chart" id="chart"></div>
+    <p class="small">Ακούμπησε το γράφημα για να δεις κάθε μέρα: τιμή, flows της μέρας και 10 ημερών, και πού ήταν η τιμή 7 μέρες μετά.</p>
+  </div>
+
+  <footer>
+    Δεδομένα: <a href="https://www.tftc.io/bitcoin-etf-flows" rel="noopener">The Commoner Bitcoin ETF Tracker by TFTC</a> (SoSoValue, Farside Investors, τιμή BTC από mempool.space), άδεια <a href="https://creativecommons.org/licenses/by/4.0/" rel="noopener">CC BY 4.0</a>. Ενημερώνεται αυτόματα κάθε μέρα. Δεν αποτελεί επενδυτική συμβουλή.
+  </footer>
+</main>
+
+<script>
+(async function () {
+  const fmtMoney = (m) => { const s = m >= 0 ? '+' : '−', a = Math.abs(m); return a >= 1000 ? `${s}$${(a / 1000).toFixed(2)} δισ.` : `${s}$${a.toFixed(0)}M`; };
+  const pct = (v) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1) + '%';
+  const set = (id, txt, cls) => { const e = document.getElementById(id); if (!e) return; e.textContent = txt; e.className = cls || ''; };
+
+  let j;
+  try { j = await fetch('data.json', {cache: 'no-cache'}).then((r) => r.json()); }
+  catch (e) { document.getElementById('chart').textContent = 'Δεν φόρτωσαν τα δεδομένα.'; return; }
+
+  const all = j.days.filter((d) => d.btcCloseUsd != null).map((d) => ({
+    date: d.date, t: new Date(d.date + 'T00:00:00Z'), flow: d.netFlowUsd / 1e6, close: d.btcCloseUsd }));
+  const byDay = new Map(all.map((d) => [d.date, d]));
+  all.forEach((d, i) => {
+    d.f10 = i >= 9 ? all.slice(i - 9, i + 1).reduce((s, e) => s + e.flow, 0) / 1000 : null;
+    d.p10 = i >= 10 ? (d.close / all[i - 10].close - 1) * 100 : null;
+    const later = new Date(d.t.getTime() + 7 * 864e5);
+    const n = all.find((e) => e.t >= later);
+    d.next7 = n ? (n.close / d.close - 1) * 100 : null;
+  });
+
+  // waves: 10-session flows below -$2B; a new episode within 45 days of the previous one counts as the next wave
+  const waves = []; let cur = null, wave = 0, prevEnd = null;
+  all.forEach((d) => {
+    if (d.f10 !== null && d.f10 < -2) {
+      if (!cur) { const gap = prevEnd ? (d.t - prevEnd) / 864e5 : Infinity; wave = gap <= 45 ? wave + 1 : 1; cur = {start: d.date, end: d.date, wave, active: false}; }
+      else cur.end = d.date;
+    } else if (cur) { waves.push(cur); prevEnd = new Date(cur.end + 'T00:00:00Z'); cur = null; }
+  });
+  if (cur) { cur.active = true; waves.push(cur); }
+
+  const last = all[all.length - 1], n = all.length;
+  const f5 = all.slice(n - 5).reduce((s, d) => s + d.flow, 0), p5 = (last.close / all[n - 6].close - 1) * 100;
+  set('f5', (f5 < 0 ? 'εκροές ' : 'εισροές ') + fmtMoney(f5), f5 < 0 ? 'down' : 'up');
+  set('p5', pct(p5), p5 < 0 ? 'down' : 'up');
+  set('upd', d3.utcFormat('%d/%m/%Y')(last.t));
+  set('t-price', '$' + d3.format(',.0f')(last.close));
+  set('t-f10', fmtMoney(last.f10 * 1000), last.f10 < 0 ? 'val down' : 'val up');
+  set('t-day', fmtMoney(last.flow), last.flow < 0 ? 'val down' : 'val up');
+  document.getElementById('t-price').className = 'val';
+  const lw = waves[waves.length - 1];
+  if (lw && lw.active) set('now', `${lw.wave}ο κύμα κάτω από −$2 δισ. (από ${d3.utcFormat('%d/%m')(new Date(lw.start + 'T00:00:00Z'))})`, lw.wave >= 2 ? 'up' : 'down');
+  else set('now', 'τα flows 10 ημερών είναι πάνω από −$2 δισ., κανένα ενεργό κύμα');
+
+  let range = 365;
+  const el = document.getElementById('chart');
+  function draw() {
+    el.replaceChildren();
+    const rows = range > 0 ? all.filter((d) => d.t >= new Date(last.t.getTime() - range * 864e5)) : all;
+    const W = Math.max(300, el.clientWidth), H = 400;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`)
+      .attr('role', 'img').attr('aria-label', 'Τιμή BTC και ETF flows 10 ημερών, με όριο −2 δισ. και αριθμημένα κύματα εκροών');
+    const fv = rows.filter((d) => d.f10 !== null).map((d) => d.f10), ext = d3.extent(fv);
+    const yC = d3.scaleLinear().domain([Math.min(-2.5, ext[0]), Math.max(0.5, ext[1])]).nice();
+    const yP = d3.scaleLinear().domain(d3.extent(rows, (d) => d.close)).nice();
+    const fP = (v) => '$' + d3.format('~s')(v).replace('k', 'K');
+    const fC = (v) => (v < 0 ? '−$' : '$') + d3.format('.1f')(Math.abs(v)) + 'B';
+    const meas = svg.append('g');
+    const wOf = (ts) => d3.max(ts.map((t) => { const x = meas.append('text').text(t); const w = x.node().getComputedTextLength(); x.remove(); return w; })) || 30;
+    const ml = wOf(yC.ticks(6).map(fC)) + 10, mr = wOf(yP.ticks(6).map(fP)) + 10, mt = 14, mb = 26;
+    meas.remove();
+    const x = d3.scaleUtc().domain(d3.extent(rows, (d) => d.t)).range([ml, W - mr]);
+    yC.range([H - mb, mt]); yP.range([H - mb, mt]);
+    svg.append('g').attr('class', 'grid').attr('transform', `translate(${ml},0)`)
+      .call(d3.axisLeft(yC).ticks(6).tickSize(-(W - ml - mr)).tickFormat('')).call((g) => g.select('.domain').remove());
+    svg.append('g').attr('transform', `translate(0,${H - mb})`).call(d3.axisBottom(x).ticks(Math.max(2, Math.floor((W - ml - mr) / 90))).tickFormat(d3.utcFormat('%b %y')));
+    svg.append('g').attr('transform', `translate(${ml},0)`).call(d3.axisLeft(yC).ticks(6).tickFormat(fC));
+    svg.append('g').attr('transform', `translate(${W - mr},0)`).call(d3.axisRight(yP).ticks(6).tickFormat(fP));
+    svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', yC(0)).attr('y2', yC(0)).attr('stroke-dasharray', '4 4').style('stroke', 'var(--muted)').style('opacity', .5);
+    svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', yC(-2)).attr('y2', yC(-2)).attr('stroke-dasharray', '6 4').attr('stroke-width', 1.5).style('stroke', 'var(--bad)');
+    svg.append('text').attr('x', ml + 4).attr('y', yC(-2) - 4).text('−$2 δισ.').style('fill', 'var(--bad)');
+    svg.append('path').datum(rows).attr('fill', 'none').attr('stroke-width', 1.5).style('stroke', 'var(--c1)')
+      .attr('d', d3.line().defined((d) => d.f10 !== null).x((d) => x(d.t)).y((d) => yC(d.f10)));
+    svg.append('path').datum(rows).attr('fill', 'none').attr('stroke-width', 2).style('stroke', 'var(--c0)')
+      .attr('d', d3.line().x((d) => x(d.t)).y((d) => yP(d.close)));
+    const inRange = new Set(rows.map((d) => d.date));
+    const mg = svg.append('g').selectAll('g').data(waves.filter((w) => inRange.has(w.start))).join('g')
+      .attr('transform', (w) => { const d = byDay.get(w.start); return `translate(${x(d.t)},${yP(d.close) - 16})`; });
+    mg.append('line').attr('y1', 9).attr('y2', 14).style('stroke', (w) => w.wave >= 2 ? 'var(--ok)' : 'var(--bad)');
+    mg.append('circle').attr('r', 9).style('fill', (w) => w.wave >= 2 ? 'var(--ok)' : 'var(--bad)').style('stroke', 'var(--panel)').attr('stroke-width', 1.5);
+    mg.append('text').attr('text-anchor', 'middle').attr('dy', '0.35em').text((w) => w.wave).style('fill', '#fff').style('font-weight', '700');
+
+    const rule = svg.append('line').attr('y1', mt).attr('y2', H - mb).style('stroke', 'var(--muted)').style('display', 'none');
+    const dP = svg.append('circle').attr('r', 4).style('fill', 'var(--c0)').style('display', 'none');
+    const dC = svg.append('circle').attr('r', 4).style('fill', 'var(--c1)').style('display', 'none');
+    const tip = d3.select(el).append('div').attr('class', 'tip').style('display', 'none');
+    const bis = d3.bisector((d) => d.t).center;
+    const show = (px) => {
+      const d = rows[bis(rows, x.invert(px))]; if (!d) return;
+      const cx = x(d.t);
+      rule.attr('x1', cx).attr('x2', cx).style('display', null);
+      dP.attr('cx', cx).attr('cy', yP(d.close)).style('display', null);
+      if (d.f10 === null) dC.style('display', 'none'); else dC.attr('cx', cx).attr('cy', yC(d.f10)).style('display', null);
+      tip.selectAll('*').remove();
+      const line = (lab, val, cls) => { const p = tip.append('div'); p.append('span').text(lab ? lab + ' ' : ''); p.append('b').attr('class', cls || null).text(val); };
+      line('', d3.utcFormat('%d/%m/%Y')(d.t));
+      line('Τιμή BTC:', '$' + d3.format(',.0f')(d.close));
+      line('ETF τη μέρα:', fmtMoney(d.flow), d.flow < 0 ? 'down' : 'up');
+      if (d.f10 !== null) line('ETF 10 ημερών:', fmtMoney(d.f10 * 1000), d.f10 < 0 ? 'down' : 'up');
+      if (d.p10 !== null) line('Τιμή 10 ημερών:', pct(d.p10));
+      const w = waves.find((w) => d.date >= w.start && d.date <= w.end);
+      if (w) line('Κύμα:', w.wave + 'ο κάτω από −$2 δισ.', w.wave >= 2 ? 'up' : 'down');
+      line('Τιμή 7 μέρες μετά:', d.next7 === null ? 'δεν έχει έρθει ακόμα' : pct(d.next7), d.next7 === null ? null : (d.next7 < 0 ? 'down' : 'up'));
+      const box = el.getBoundingClientRect(), sc = box.width / W, tw = tip.node().offsetWidth;
+      let left = cx * sc + 12; if (left + tw > box.width) left = cx * sc - tw - 12;
+      tip.style('left', Math.max(0, left) + 'px').style('top', '8px').style('display', null);
+    };
+    const hide = () => { rule.style('display', 'none'); dP.style('display', 'none'); dC.style('display', 'none'); tip.style('display', 'none'); };
+    svg.append('rect').attr('x', ml).attr('y', mt).attr('width', W - ml - mr).attr('height', H - mt - mb).attr('fill', 'transparent')
+      .on('pointermove', (ev) => show(d3.pointer(ev)[0])).on('pointerdown', (ev) => show(d3.pointer(ev)[0])).on('pointerleave', hide);
+  }
+  document.querySelectorAll('#range button').forEach((b) => b.addEventListener('click', () => {
+    range = +b.dataset.range;
+    document.querySelectorAll('#range button').forEach((o) => o.classList.toggle('on', o === b));
+    draw();
+  }));
+  let lastW = 0;
+  new ResizeObserver(() => { if (Math.abs(el.clientWidth - lastW) > 4) { lastW = el.clientWidth; draw(); } }).observe(el);
+})();
+</script>
+</body>
+</html>
