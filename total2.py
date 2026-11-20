@@ -1,4 +1,4 @@
-"""Download daily TOTAL2 (crypto market cap excluding BTC) from TradingView into total2.json."""
+"""Download daily TOTAL2 (crypto market cap excluding BTC) and BTCUSDT (Binance, with volume) from TradingView."""
 import json
 import random
 import re
@@ -62,3 +62,13 @@ assert len(rows) > 300, len(rows)
 json.dump({"source": "TradingView CRYPTOCAP:TOTAL2, daily, US$ billions", "cols": ["date", "close", "low"], "rows": rows},
           open("total2.json", "w"), separators=(",", ":"))
 print(len(rows), rows[-1])
+
+btc = []
+for v in tv_bars("BINANCE:BTCUSDT"):
+    day = datetime.fromtimestamp(v[0], timezone.utc).strftime("%Y-%m-%d")
+    if day >= "2023-11-01" and len(v) >= 6:
+        btc.append([day, round(v[1], 1), round(v[2], 1), round(v[3], 1), round(v[4], 1), round(v[5])])
+assert len(btc) > 300, len(btc)
+json.dump({"source": "TradingView BINANCE:BTCUSDT, daily", "cols": ["date", "open", "high", "low", "close", "volume"], "rows": btc},
+          open("btc.json", "w"), separators=(",", ":"))
+print(len(btc), btc[-1])
